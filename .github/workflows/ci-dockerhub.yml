@@ -22,7 +22,9 @@ jobs:
 
       - name: Build and push image
         run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
-            -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker build -t "${{ secrets.DOCKERHUB_USERNAME }}/python-ci-lab:latest" .
-          docker push "${{ secrets.DOCKERHUB_USERNAME }}/python-ci-lab:latest"
+          DOCKERHUB_USERNAME="$(printf '%s' "${{ secrets.DOCKERHUB_USERNAME }}" | tr -d '\r\n')"
+          DOCKERHUB_TOKEN="$(printf '%s' "${{ secrets.DOCKERHUB_TOKEN }}" | tr -d '\r\n')"
+          printf '%s' "$DOCKERHUB_TOKEN" | docker login \
+            -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker build -t "$DOCKERHUB_USERNAME/python-ci-lab:latest" .
+          docker push "$DOCKERHUB_USERNAME/python-ci-lab:latest"
